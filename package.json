@@ -1,0 +1,20 @@
+{
+  "name": "alibi",
+  "version": "0.0.0",
+  "description": "Proof of a person's whereabouts at a given time",
+  "author": null,
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "@exponent/ex-navigation": "^1.6.0",
+    "@exponent/samples": "^1.0.2",
+    "@exponent/vector-icons": "^1.0.1",
+    "exponent": "^10.0.0",
+    "react": "~15.3.2",
+    "react-native": "github:exponentjs/react-native#sdk-10.1.2",
+    "react-native-aws3": "0.0.1",
+    "react-native-camera": "^0.3.8",
+    "react-native-dropdown": "0.0.6",
+    "react-native-orientation": "^1.16.0"
+  }
+}
