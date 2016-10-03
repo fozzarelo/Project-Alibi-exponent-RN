@@ -1,6 +1,7 @@
 import React from 'react';
 import {Animated, AsyncStorage, Image, Linking, Platform, ScrollView, StyleSheet, Text,  TextInput, TouchableOpacity, View} from 'react-native';
 import { MonoText } from '../components/StyledText';
+import appData from '../appData'
 
 export default class HomeScreen extends React.Component {
   constructor(props) {
@@ -64,13 +65,7 @@ export default class HomeScreen extends React.Component {
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>
-            This is a tab bar. You can edit it in:
-          </Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/RootNavigation.js</MonoText>
-          </View>
+          <Animated.Text style={[styles.tabBarInfoText,{opacity: this.state.fade}]}>{this.state.notification}</Animated.Text>
         </View>
       </View>
     );
@@ -99,17 +94,59 @@ export default class HomeScreen extends React.Component {
     }
   }
 
+  signIn() {
+    this.setState({errorMessage: null});
+    this.state.fade.setValue(1);
+
+    let url = `${appData.urlBase}/users/signin?token=${appData.urlToken}&email=${this.state.email}&password=${this.state.password}`;
+    let request = new Request(url, {
+      method: 'POST',
+      headers: new Headers({'Content-Type': 'text/plain'})
+    });
+    fetch(request)
+      .then((response) => {
+        return response.json();
+      })
+      .then((user) => {
+        if (user.error) {
+          this.setState({errorMessage: user.error});
+          Animated.timing(this.state.fade, {toValue: 0, duration: 3000}).start();
+        }
+        else {
+
+          // AsyncStorage.setItem('email', user.email)
+          // AsyncStorage.setItem('username', user.username)
+          // AsyncStorage.setItem('contacts', JSON.stringify(user.contacts))
+          //   .then(() => {
+          //     this.props.navigator.immediatelyResetRouteStack([{name: 'send'}]);
+          //   })
+
+          this.setState({username: user.username, emai: user.email, valuesForPicker: user.contacts})
+        }
+      })
+      .catch(() => {
+        this.setState({errorMessage: 'Connection error'});
+        Animated.timing(this.state.fade, {toValue: 0, duration: 3000}).start();
+      })
+  }
+
+  loadUserInfo () {
+
+  }
+
   componentWillMount() {
-  AsyncStorage.getItem('username')
-    .then(username => {this.setState({username: username});
-    });
-  AsyncStorage.getItem('email')
-    .then(email => {this.setState({email: email});
-    });
-  AsyncStorage.getItem('contacts')
-    .then(contacts => {
-      this.setState({valuesForPicker: JSON.parse(contacts)})
-    });
+
+  // AsyncStorage.getItem('username')
+  //   .then(username => {this.setState({username: username});
+  //   });
+  // AsyncStorage.getItem('email')
+  //   .then(email => {this.setState({email: email});
+  //   });
+  // AsyncStorage.getItem('contacts')
+  //   .then(contacts => {
+  //     this.setState({valuesForPicker: JSON.parse(contacts)})
+  //   });
+  this.signIn.bind(this)
   this.getLocation.bind(this)()
   AsyncStorage.setItem('photoLink', '')
 }
